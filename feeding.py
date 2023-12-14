@@ -37,9 +37,9 @@ options.add_argument('--ignore-certificate-errors')
 options.add_argument('--incognito')
 options.add_argument('--headless')
 
+
 count_file = get_fullpath("count.log")
 count = 0
-
 if os.path.exists(count_file):
     with open(count_file, "r") as file:
         count = int(file.read().strip())
