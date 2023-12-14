@@ -35,6 +35,7 @@ logger.addHandler(fh)
 options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')
 options.add_argument('--incognito')
+options.add_argument('--no-sandbox')
 options.add_argument('--headless')
 
 
