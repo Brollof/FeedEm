@@ -8,20 +8,26 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-def get_fullpath(filename):
+def get_fullpath(filename: str) -> str:
     script_dir = os.path.dirname(os.path.realpath(__file__))
     return os.path.join(script_dir, filename)
+
+
+def save_count(filepath: str, cnt: int) -> None:
+    with open(filepath, "w") as file:
+        print(cnt)
+        file.write(str(cnt))
 
 
 URL = "https://nakarmpsa.olx.pl/"
 TIMEOUT_S = 10
 FEED_PERIOD_S = (5, 10)
 
+
 logger = logging.getLogger("feed")
 logger.setLevel(logging.DEBUG)
 
 fh = logging.FileHandler(get_fullpath("feeding.log"))
-
 formatter = logging.Formatter("%(asctime)s|%(levelname)s|%(message)s")
 fh.setFormatter(formatter)
 logger.addHandler(fh)
@@ -30,6 +36,14 @@ options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')
 options.add_argument('--incognito')
 options.add_argument('--headless')
+
+count_file = get_fullpath("count.log")
+count = 0
+
+if os.path.exists(count_file):
+    with open(count_file, "r") as file:
+        count = int(file.read().strip())
+
 
 while True:
     driver = webdriver.Chrome(options=options)
@@ -59,6 +73,9 @@ while True:
     logger.info(f"Feeding {pet_name} ({pet_type}) with {float(pet_votes):.2f} %")
     button.click()
     logger.info("Done!")
+
+    count += 1
+    save_count(count_file, count)
 
     sleep_time = random.randint(*FEED_PERIOD_S)
     logger.info(f"Sleeping {sleep_time} seconds...")
